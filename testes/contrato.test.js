@@ -70,8 +70,9 @@ const esperar = (ms) => new Promise(r => setTimeout(r, ms));
     ok((await get({ token: 'errado' })).erro || (await (await fetch(`${BASE}?token=errado`)).json()).erro,
        'token errado é recusado');
   } finally {
-    srv.kill();
+    // esperar o filho morrer antes de sair evita um assert do libuv no Windows
+    await new Promise(r => { srv.once('exit', r); srv.kill(); setTimeout(r, 1500); });
   }
   console.log(falhas ? `\n${falhas} de ${total} FALHARAM` : `\n${total} asserções, todas passaram.`);
-  process.exit(falhas ? 1 : 0);
+  process.exitCode = falhas ? 1 : 0;
 })();

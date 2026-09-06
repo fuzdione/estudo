@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F3864">
+<title>Estudo COFEN</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ==================== TELA: DIA ==================== -->
+<section id="tela-dia" class="tela">
+  <header class="topo">
+    <div class="topo-rotulo">Semana <span id="semana-atual">A</span> · <span id="dia-nome">—</span></div>
+    <div id="topo-progresso" class="topo-valor">0 de 0 min</div>
+    <div id="topo-sub" class="topo-sub">carregando…</div>
+    <div class="topo-acoes">
+      <button id="btn-semana" class="topo-btn" type="button">Trocar p/ B</button>
+      <button id="btn-outro-dia" class="topo-btn" type="button">Outro dia</button>
+      <button id="btn-config" class="topo-btn" type="button">Ajustes</button>
+    </div>
+  </header>
+
+  <div id="aviso" class="alerta oculto"></div>
+
+  <main id="lista" class="lista"></main>
+</section>
+
+<!-- ==================== TELA: FORMULÁRIO ==================== -->
+<section id="tela-form" class="tela oculto">
+  <header class="barra">
+    <button id="btn-cancelar" class="barra-btn" type="button">Voltar</button>
+    <span id="form-titulo" class="barra-titulo">Matéria</span>
+    <button id="btn-salvar" class="barra-btn destaque" type="button">Salvar</button>
+  </header>
+
+  <form id="form" class="form" autocomplete="off" novalidate>
+    <div class="campo">
+      <label>Tempo estudado</label>
+      <div class="chips" id="chips-tempo">
+        <button type="button" class="chip" data-min="15">15 min</button>
+        <button type="button" class="chip" data-min="30">30 min</button>
+        <button type="button" class="chip" data-min="45">45 min</button>
+        <button type="button" class="chip" data-min="60">60 min</button>
+      </div>
+      <input id="f-estudado" type="number" inputmode="numeric" min="0" step="5" placeholder="minutos">
+      <div class="ajuda">Dá para salvar 30 agora e voltar depois para 60.</div>
+    </div>
+
+    <div class="campo">
+      <label for="f-material">Material <span class="opcional">(opcional)</span></label>
+      <input id="f-material" type="text" placeholder="Ex.: Estratégia, aula 04">
+    </div>
+
+    <fieldset class="campo grupo">
+      <legend>Questões</legend>
+      <div class="dupla">
+        <div>
+          <label for="f-quant">Quantidade</label>
+          <input id="f-quant" type="number" inputmode="numeric" min="0" placeholder="0">
+        </div>
+        <div>
+          <label for="f-acertos">Acertos</label>
+          <input id="f-acertos" type="number" inputmode="numeric" min="0" placeholder="0">
+        </div>
+      </div>
+      <div id="aproveitamento" class="ajuda">—</div>
+    </fieldset>
+  </form>
+</section>
+
+<!-- ==================== TELA: AJUSTES ==================== -->
+<section id="tela-config" class="tela oculto">
+  <header class="barra">
+    <button id="btn-config-voltar" class="barra-btn" type="button">Voltar</button>
+    <span class="barra-titulo">Ajustes</span>
+    <button id="btn-config-salvar" class="barra-btn destaque" type="button">Salvar</button>
+  </header>
+  <form class="form" autocomplete="off" novalidate>
+    <div class="campo">
+      <label for="c-url">URL do app da Web (Apps Script)</label>
+      <input id="c-url" type="url" placeholder="https://script.google.com/macros/s/…/exec">
+    </div>
+    <div class="campo">
+      <label for="c-token">Token</label>
+      <input id="c-token" type="text" placeholder="a mesma frase do Codigo.gs">
+    </div>
+    <div class="ajuda">
+      Ficam só neste aparelho. Sem eles o app funciona offline, mas não
+      sincroniza com a planilha.
+    </div>
+  </form>
+</section>
+
+<div id="toast" class="toast oculto"></div>
+
+<script src="db.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

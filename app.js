@@ -10,7 +10,13 @@ const cfg = {
   set semana(v){ localStorage.setItem('semana', v); },
 };
 
-let estado = { semana: 'A', dia: DIAS_ORDEM[new Date().getDay()], dados: null, editando: null };
+let estado = {
+  semana: 'A',
+  dia: DIAS_ORDEM[new Date().getDay()],
+  dados: null,
+  semanas: [],          // [{nome:'SEM A', rotulo:'A'}, …]
+  editando: null,
+};
 
 const $ = (id) => document.getElementById(id);
 const mostrar = (tela) => document.querySelectorAll('.tela')
@@ -27,10 +33,10 @@ function toast(msg, erro) {
 
 /* ------------------------------------------------------------- rede */
 
-async function baixarSemana(semana) {
+async function api(params) {
   if (!cfg.url || !cfg.token) throw new Error('sem configuração');
-  const u = `${cfg.url}?token=${encodeURIComponent(cfg.token)}&semana=${semana}`;
-  const r = await fetch(u, { redirect: 'follow' });
+  const q = new URLSearchParams({ token: cfg.token, ...params });
+  const r = await fetch(`${cfg.url}?${q}`, { redirect: 'follow' });
   const j = await r.json();
   if (j.erro) throw new Error(j.erro);
   return j;
@@ -68,28 +74,60 @@ async function sincronizar() {
 
 /* ------------------------------------------------------------ dados */
 
-async function carregar(forcarRede) {
-  estado.semana = cfg.semana;
-  const local = await lerSemana(estado.semana);
-  if (local) { estado.dados = local; render(); }
+function preencherSeletor() {
+  const sel = $('sel-semana');
+  sel.innerHTML = '';
+  const lista = estado.semanas.length
+    ? estado.semanas
+    : [{ nome: 'SEM ' + estado.semana, rotulo: estado.semana }];
+  lista.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s.rotulo;
+    o.textContent = s.rotulo.length > 14 ? s.rotulo.slice(0, 13) + '…' : s.rotulo;
+    o.selected = s.rotulo === estado.semana;
+    sel.appendChild(o);
+  });
 
-  if (forcarRede !== false) {
-    try {
-      await sincronizar();
-      const novo = await baixarSemana(estado.semana);
-      novo.semana = estado.semana;
-      await salvarSemana(novo);
-      estado.dados = novo;
-      render();
-      $('aviso').classList.add('oculto');
-    } catch (e) {
-      if (!local) {
-        $('aviso').textContent = cfg.url
-          ? 'Não consegui falar com a planilha. Abra Ajustes e confira a URL e o token.'
-          : 'Configure a URL do app da Web em Ajustes para sincronizar.';
-        $('aviso').classList.remove('oculto');
-      }
+  const base = $('n-base');
+  base.innerHTML = '';
+  lista.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s.rotulo;
+    o.textContent = s.rotulo;
+    base.appendChild(o);
+  });
+}
+
+async function carregar(comRede = true) {
+  estado.semana = cfg.semana;
+
+  const local = await lerSemana(estado.semana);
+  if (local) { estado.dados = local; }
+  const semanasLocais = await lerSemanas();
+  if (semanasLocais) estado.semanas = semanasLocais;
+  if (local) render();
+
+  if (!comRede) return;
+  try {
+    await sincronizar();
+    const l = await api({ acao: 'semanas' });
+    estado.semanas = l.semanas;
+    await salvarSemanas(l.semanas);
+
+    const novo = await api({ semana: estado.semana });
+    novo.semana = estado.semana;
+    await salvarSemana(novo);
+    estado.dados = novo;
+    render();
+    $('aviso').classList.add('oculto');
+  } catch (e) {
+    if (!local) {
+      $('aviso').textContent = cfg.url
+        ? 'Não consegui falar com a planilha: ' + e.message
+        : 'Configure a URL do app da Web em Ajustes para sincronizar.';
+      $('aviso').classList.remove('oculto');
     }
+    render();
   }
 }
 
@@ -103,7 +141,7 @@ const linhasDoDia = () => {
 function render() {
   $('semana-atual').textContent = estado.semana;
   $('dia-nome').textContent = estado.dia;
-  $('btn-semana').textContent = 'Trocar p/ ' + (estado.semana === 'A' ? 'B' : 'A');
+  preencherSeletor();
 
   const linhas = linhasDoDia();
   const feito = linhas.reduce((s, l) => s + (Number(l.estudado) || 0), 0);
@@ -179,12 +217,26 @@ async function salvar() {
   }
 }
 
+async function criarSemana() {
+  const nome = $('n-nome').value.trim();
+  if (!nome) { toast('Dê um nome para a aba', true); return; }
+  try {
+    const r = await enviar({ acao: 'criar', nome, base: $('n-base').value });
+    estado.semanas = r.semanas;
+    await salvarSemanas(r.semanas);
+    cfg.semana = r.criada.replace(/^SEM\s+/i, '');
+    $('n-nome').value = '';
+    mostrar('tela-dia');
+    toast(`${r.criada} criada`);
+    carregar();
+  } catch (e) {
+    toast(e.message, true);
+  }
+}
+
 /* ------------------------------------------------------------ eventos */
 
-$('btn-semana').onclick = () => {
-  cfg.semana = estado.semana === 'A' ? 'B' : 'A';
-  carregar();
-};
+$('sel-semana').onchange = (ev) => { cfg.semana = ev.target.value; carregar(); };
 
 $('btn-outro-dia').onclick = () => {
   const i = DIAS_ORDEM.indexOf(estado.dia);
@@ -200,6 +252,10 @@ $('f-acertos').oninput = aproveitamento;
 document.querySelectorAll('#chips-tempo .chip').forEach(c => {
   c.onclick = () => { $('f-estudado').value = c.dataset.min; };
 });
+
+$('btn-nova-semana').onclick = () => { preencherSeletor(); mostrar('tela-nova'); };
+$('btn-nova-voltar').onclick = () => mostrar('tela-dia');
+$('btn-nova-criar').onclick = criarSemana;
 
 $('btn-config').onclick = () => {
   $('c-url').value = cfg.url;

@@ -1,0 +1,12 @@
+{
+  "name": "estudo-cofen",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PWA de registro de estudo sincronizado com a planilha do COFEN",
+  "scripts": {
+    "start": "node testes/servidor.js",
+    "test": "node testes/codigo.test.js && node testes/contrato.test.js",
+    "teste:codigo": "node testes/codigo.test.js",
+    "teste:contrato": "node testes/contrato.test.js"
+  }
+}

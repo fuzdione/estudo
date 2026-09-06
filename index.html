@@ -17,8 +17,9 @@
     <div id="topo-progresso" class="topo-valor">0 de 0 min</div>
     <div id="topo-sub" class="topo-sub">carregando…</div>
     <div class="topo-acoes">
-      <button id="btn-semana" class="topo-btn" type="button">Trocar p/ B</button>
+      <select id="sel-semana" class="topo-sel" aria-label="Semana"></select>
       <button id="btn-outro-dia" class="topo-btn" type="button">Outro dia</button>
+      <button id="btn-nova-semana" class="topo-btn" type="button">Nova semana</button>
       <button id="btn-config" class="topo-btn" type="button">Ajustes</button>
     </div>
   </header>
@@ -90,6 +91,30 @@
     <div class="ajuda">
       Ficam só neste aparelho. Sem eles o app funciona offline, mas não
       sincroniza com a planilha.
+    </div>
+  </form>
+</section>
+
+<!-- ==================== TELA: NOVA SEMANA ==================== -->
+<section id="tela-nova" class="tela oculto">
+  <header class="barra">
+    <button id="btn-nova-voltar" class="barra-btn" type="button">Voltar</button>
+    <span class="barra-titulo">Nova semana</span>
+    <button id="btn-nova-criar" class="barra-btn destaque" type="button">Criar</button>
+  </header>
+  <form class="form" autocomplete="off" novalidate>
+    <div class="campo">
+      <label for="n-nome">Nome da aba</label>
+      <input id="n-nome" type="text" placeholder="Ex.: SEM 03 · 07-13out">
+      <div class="ajuda">Precisa começar com <code>SEM </code>. Se você esquecer, eu acrescento.</div>
+    </div>
+    <div class="campo">
+      <label for="n-base">Copiar a grade de</label>
+      <select id="n-base"></select>
+      <div class="ajuda">
+        Copia as matérias de cada hora e deixa tempo, material e questões em
+        branco. Lembre do ciclo: se a última foi A, esta é B.
+      </div>
     </div>
   </form>
 </section>

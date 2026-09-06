@@ -131,3 +131,17 @@ input:focus { outline: 2px solid var(--azul-claro); outline-offset: -1px; }
   input[type=number], input[type=text], input[type=url], .chip, .grupo { background: #141A22; }
   .alerta { background: #2A2416; border-color: #4A3F22; }
 }
+
+/* seletor de semana no cabeçalho */
+.topo-sel {
+  background: rgba(255, 255, 255, .14);
+  color: #fff; border: 0; border-radius: 999px;
+  padding: 7px 12px; font: inherit; font-size: 14px;
+  max-width: 46vw; cursor: pointer;
+}
+.topo-sel option { color: #111; background: #fff; }
+
+code {
+  background: rgba(127, 127, 127, .16);
+  padding: 1px 5px; border-radius: 4px; font-size: .92em;
+}

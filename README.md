@@ -50,8 +50,17 @@ Toque num deles, informe o tempo (há atalhos de 15/30/45/60 min), o material
 se quiser, e a quantidade de questões e acertos. Salvar grava no aparelho na
 hora e sincroniza quando houver rede.
 
-**Trocar p/ B** alterna a semana do ciclo rotativo; **Outro dia** percorre os
-dias, para lançar algo esquecido.
+O **seletor de semana** no topo lista todas as abas que começam com `SEM `;
+**Outro dia** percorre os dias, para lançar algo esquecido.
+
+### Semana nova
+
+Toque em **Nova semana**, dê um nome (sugestão: `SEM 03 · 07-13out`) e escolha
+de qual semana copiar a grade — lembrando do ciclo: se a última foi A, esta é B.
+Ele duplica o `Modelo`, copia as matérias de cada hora e deixa tempo, material e
+questões em branco. A aba nova já aparece no seletor.
+
+Sem isso, a semana 3 sobrescreveria o que você registrou na semana 1.
 
 ## Detalhes que importam
 
@@ -65,5 +74,24 @@ dias, para lançar algo esquecido.
   CORS, que o Apps Script não responde.
 - As colunas gravadas são `Estudado` (E), `Material` (F), `Quant` (J) e
   `Acertos` (K). O `% Acertos` é fórmula da planilha e se atualiza sozinho.
-- Se você mudar o layout das abas `SEM A`/`SEM B`, ajuste `DIAS` e `COL` no
+- Se você mudar o layout das abas de semana, ajuste `DIAS` e `COL` no
   `Codigo.gs`.
+- O `Codigo.gs` aceita tanto o rótulo (`A`, `03 · 07-13out`) quanto o nome
+  inteiro da aba (`SEM A`), e não força maiúscula no nome todo — isso
+  quebraria abas com data em minúscula.
+
+## Testes
+
+```bash
+npm test              # backend + contrato front/back
+npm run teste:codigo  # só o Codigo.gs
+npm start             # servidor de desenvolvimento em localhost:8137
+```
+
+`testes/fixture.json` tem os dados reais das abas `SEM A`, `SEM B` e `Modelo`;
+`testes/planilha-falsa.js` é o dublê das APIs do Apps Script e carrega o
+`Codigo.gs` de produção, então os testes rodam contra o código que vai ao ar.
+
+O `npm start` sobe o app com uma planilha simulada em memória — dá para mexer
+no app inteiro no navegador sem tocar na planilha de verdade. Em **Ajustes**
+use `http://localhost:8137/exec` e o token `teste-local`.

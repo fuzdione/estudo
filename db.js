@@ -4,7 +4,7 @@
    também carrega este arquivo. */
 
 const DB_NOME = 'controle-estudo';
-const DB_VERSAO = 1;
+const DB_VERSAO = 2;   // 2: store 'meta' (lista de abas de semana)
 
 function abrirDB() {
   return new Promise((ok, erro) => {
@@ -19,6 +19,10 @@ function abrirDB() {
       // duas vezes a mesma linha não gere dois envios.
       if (!db.objectStoreNames.contains('fila')) {
         db.createObjectStore('fila', { keyPath: 'chave' });
+      }
+      // Lista de abas de semana, para o seletor funcionar offline.
+      if (!db.objectStoreNames.contains('meta')) {
+        db.createObjectStore('meta', { keyPath: 'chave' });
       }
     };
     req.onsuccess = () => ok(req.result);
@@ -47,6 +51,19 @@ async function salvarSemana(dados) {
 async function lerSemana(semana) {
   const db = await abrirDB();
   return _req(_tx(db, 'semanas', 'readonly').get(semana));
+}
+
+/* ------------------------------------------------------- lista de abas */
+
+async function salvarSemanas(lista) {
+  const db = await abrirDB();
+  return _req(_tx(db, 'meta', 'readwrite').put({ chave: 'semanas', lista }));
+}
+
+async function lerSemanas() {
+  const db = await abrirDB();
+  const r = await _req(_tx(db, 'meta', 'readonly').get('semanas'));
+  return r ? r.lista : null;
 }
 
 /* ---------------------------------------------------------------- fila */

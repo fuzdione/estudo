@@ -30,8 +30,12 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;                       // POST vai direto à rede
   if (new URL(req.url).origin !== location.origin) return; // Apps Script: sempre fresco
 
+  // O Pages manda Cache-Control: max-age=600, então um fetch comum pode devolver
+  // o arquivo velho do cache HTTP do navegador por até 10 min (foi assim que o
+  // index.html novo chegou ao celular com o app.js antigo). no-cache força a
+  // revalidação com o servidor a cada carga.
   e.respondWith(
-    fetch(req)
+    fetch(req, { cache: 'no-cache' })
       .then(res => {
         if (res.ok) {
           const copia = res.clone();

@@ -13,12 +13,21 @@
 <!-- ==================== TELA: DIA ==================== -->
 <section id="tela-dia" class="tela">
   <header class="topo">
-    <div class="topo-rotulo">Semana <span id="semana-atual">A</span> · <span id="dia-nome">—</span></div>
+    <div class="topo-nav">
+      <button id="btn-dia-ant" class="nav-btn" type="button" aria-label="Dia anterior">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        <span id="nome-ant">—</span>
+      </button>
+      <div class="topo-rotulo">Semana <span id="semana-atual">A</span> · <strong id="dia-nome">—</strong></div>
+      <button id="btn-dia-prox" class="nav-btn" type="button" aria-label="Próximo dia">
+        <span id="nome-prox">—</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
     <div id="topo-progresso" class="topo-valor">0 de 0 min</div>
     <div id="topo-sub" class="topo-sub">carregando…</div>
     <div class="topo-acoes">
       <select id="sel-semana" class="topo-sel" aria-label="Semana"></select>
-      <button id="btn-outro-dia" class="topo-btn" type="button">Outro dia</button>
       <button id="btn-nova-semana" class="topo-btn" type="button">Nova semana</button>
       <button id="btn-config" class="topo-btn" type="button">Ajustes</button>
     </div>

@@ -141,6 +141,9 @@ const linhasDoDia = () => {
 function render() {
   $('semana-atual').textContent = estado.semana;
   $('dia-nome').textContent = estado.dia;
+  const i = DIAS_ORDEM.indexOf(estado.dia);
+  $('nome-ant').textContent = DIAS_ORDEM[(i + 6) % 7];
+  $('nome-prox').textContent = DIAS_ORDEM[(i + 1) % 7];
   preencherSeletor();
 
   const linhas = linhasDoDia();
@@ -240,11 +243,13 @@ async function criarSemana() {
 
 $('sel-semana').onchange = (ev) => { cfg.semana = ev.target.value; carregar(); };
 
-$('btn-outro-dia').onclick = () => {
+const irDia = (passo) => {
   const i = DIAS_ORDEM.indexOf(estado.dia);
-  estado.dia = DIAS_ORDEM[(i + 1) % 7];
+  estado.dia = DIAS_ORDEM[(i + passo + 7) % 7];
   render();
 };
+$('btn-dia-ant').onclick = () => irDia(-1);
+$('btn-dia-prox').onclick = () => irDia(1);
 
 $('btn-cancelar').onclick = () => mostrar('tela-dia');
 $('btn-salvar').onclick = salvar;

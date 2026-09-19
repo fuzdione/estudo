@@ -249,7 +249,15 @@ $('btn-outro-dia').onclick = () => {
 $('btn-cancelar').onclick = () => mostrar('tela-dia');
 $('btn-salvar').onclick = salvar;
 $('btn-salvar-baixo').onclick = salvar;
-$('f-quant').oninput = aproveitamento;
+$('f-quant').oninput = (ev) => {
+  aproveitamento();
+  // 2 dígitos digitados (não apagados) → pula para Acertos. Quem faz 100+ questões
+  // de uma vez precisa voltar ao campo; a maioria dos estudos tem 10–99.
+  if (ev.inputType?.startsWith('insert') && $('f-quant').value.length === 2) {
+    $('f-acertos').focus();
+    $('f-acertos').select();
+  }
+};
 $('f-acertos').oninput = aproveitamento;
 
 document.querySelectorAll('#chips-tempo .chip').forEach(c => {

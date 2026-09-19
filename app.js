@@ -156,6 +156,8 @@ function render() {
 
   $('lista').innerHTML = '';
   linhas.forEach(l => {
+    const pct = Number(l.quant) > 0
+      ? `${Math.round(100 * (Number(l.acertos) || 0) / Number(l.quant))}%` : '';
     const done = Number(l.estudado) > 0;
     const card = document.createElement('button');
     card.type = 'button';
@@ -163,11 +165,11 @@ function render() {
     card.innerHTML = `
       <div class="card-topo">
         <span class="card-materia">${l.materia}</span>
-        <span class="card-hora">${l.ordem}ª hora</span>
+        <span class="card-hora">${pct ? pct + ' · ' : ''}${l.ordem}ª hora</span>
       </div>
       <div class="card-linha">
         <span class="${done ? 'ok' : 'pend'}">${done ? l.estudado + ' min' : 'não registrado'}</span>
-        ${Number(l.quant) ? `<span class="sep">·</span><span>${l.acertos || 0}/${l.quant} questões</span>` : ''}
+        ${Number(l.quant) ? `<span class="sep">·</span><span>${l.quant} questões · ${l.acertos || 0} acertos</span>` : ''}
       </div>
       ${l.material ? `<div class="card-material">${l.material}</div>` : ''}`;
     card.onclick = () => abrirForm(l);
@@ -246,6 +248,7 @@ $('btn-outro-dia').onclick = () => {
 
 $('btn-cancelar').onclick = () => mostrar('tela-dia');
 $('btn-salvar').onclick = salvar;
+$('btn-salvar-baixo').onclick = salvar;
 $('f-quant').oninput = aproveitamento;
 $('f-acertos').oninput = aproveitamento;
 

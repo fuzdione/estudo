@@ -145,3 +145,10 @@ code {
   background: rgba(127, 127, 127, .16);
   padding: 1px 5px; border-radius: 4px; font-size: .92em;
 }
+
+/* botão Salvar no fim do formulário, ao alcance do polegar */
+.btn-salvar {
+  width: 100%; padding: 15px; border: 0; border-radius: 12px;
+  background: var(--azul); color: #fff; font-size: 17px; font-weight: 650;
+}
+.btn-salvar:active { background: var(--azul-claro); }
